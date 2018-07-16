@@ -1,51 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import './product_edit.dart';
+import '../scoped-models/main.dart';
 
 class ProductListPage extends StatelessWidget {
-  final Function updateProduct;
-  final List<Map<String, dynamic>> products;
 
-  ProductListPage(this.products, this.updateProduct);
+  Widget _buildEditButton(BuildContext context, int index, MainModel model) {
+        return IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () {
+            model.selectProduct(index);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return ProductEditPage();
+                },
+              ),
+            );
+          },
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+  return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         return Dismissible(
-          key: Key(products[index]['title']),
-          background: Container(color: Colors.red,),
+          onDismissed: (DismissDirection direction) {
+            if (direction == DismissDirection.endToStart) {
+              model.selectProduct(index);
+              model.deleteProduct();
+            }
+          },
+          key: Key(model.allProducts[index].title),
+          background: Container(
+            color: Colors.red,
+          ),
           child: Column(
             children: <Widget>[
               ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(products[index]['image']),
-                ),
-                title: Text(products[index]['title']),
-                subtitle: Text('\$${products[index]['price'].toString()}'),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return ProductEditPage(
-                            product: products[index],
-                            updateProduct: updateProduct,
-                            productIndex: index,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(model.allProducts[index].image),
+                  ),
+                  title: Text(model.allProducts[index].title),
+                  subtitle: Text('\$${model.allProducts[index].price.toString()}'),
+                  trailing: _buildEditButton(context, index, model)),
               Divider(),
             ],
           ),
         );
       },
-      itemCount: products.length,
+      itemCount: model.allProducts.length,
     );
+          
+       },
+    );
+    
+    
   }
 }

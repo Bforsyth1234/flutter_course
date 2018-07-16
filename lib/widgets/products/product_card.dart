@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import './price_tag.dart';
 import '../ui_elements/title_defautl.dart';
 import './address_tag.dart';
+import '../../models/product.dart';
+import '../../scoped-models/main.dart';
 
 class ProductCart extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final Product product;
   final int productIndex;
 
   ProductCart(this.product, this.productIndex);
@@ -16,12 +19,12 @@ class ProductCart extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TitleDefault(product['title']),
+          TitleDefault(product.title),
           SizedBox(
             width: 8.0,
           ),
           PriceTag(
-            product['price'].toString(),
+            product.price.toString(),
           ),
         ],
       ),
@@ -40,10 +43,17 @@ class ProductCart extends StatelessWidget {
                 '/product/' + productIndex.toString(),
               ),
         ),
-        IconButton(
-          icon: Icon(Icons.favorite_border),
-          color: Colors.red,
-          onPressed: () {},
+        ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel model) {
+            return IconButton(
+              icon: Icon(model.products[productIndex].isFavorite ? Icons.favorite : Icons.favorite_border),
+              color: Colors.red,
+              onPressed: () {
+                model.selectProduct(productIndex);
+                model.toggleProductFavoriteStatus();
+              },
+            );
+          },
         )
       ],
     );
@@ -55,13 +65,13 @@ class ProductCart extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          Image.asset(product['image']),
+          Image.asset(product.image),
           _buildTitlePriceRow(),
           AddressTag('Simsbury, Connecticut'),
+          Text(product.userEmail),
           _buildActionButtons(context),
         ],
       ),
     );
-    ;
   }
 }
