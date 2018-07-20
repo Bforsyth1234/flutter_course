@@ -127,7 +127,7 @@ class _AuthPage extends State<AuthPage> {
                     ),
                     ScopedModelDescendant<MainModel>(
                       builder: (BuildContext context, Widget child, MainModel model) {
-                        _buildLoginButton(model);
+                        return _buildLoginButton(model);
                       },
                     )
                   ],

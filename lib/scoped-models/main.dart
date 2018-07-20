@@ -4,6 +4,7 @@ import './connected_products.dart';
 import './products.dart';
 import './user.dart';
 
-class MainModel extends Model with ConnectedProducts, UserModel, ProductsModel {
+class MainModel extends Model with ConnectedProductsModel, UserModel, ProductsModel {
 
 }
+

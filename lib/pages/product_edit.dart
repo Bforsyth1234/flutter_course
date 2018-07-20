@@ -91,7 +91,7 @@ class _ProductEditPage extends State<ProductEditPage> {
           color: Theme.of(context).accentColor,
           textColor: Colors.white,
           child: Text('Save'),
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
+          onPressed: () => _submitForm(model.addProduct, model.updateProduct, model.selectProduct,
               model.selectedProductIndex),
         );
       },
@@ -129,7 +129,7 @@ class _ProductEditPage extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct,
+  void _submitForm(Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) {
       return;
@@ -137,22 +137,20 @@ class _ProductEditPage extends State<ProductEditPage> {
     _formKey.currentState.save();
     if (selectedProductIndex == null) {
       addProduct(
-        Product(
-            title: _formData['title'],
-            description: _formData['description'],
-            image: _formData['image'],
-            price: _formData['price']),
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price'],
       );
     } else {
       updateProduct(
-        Product(
-            title: _formData['title'],
-            description: _formData['description'],
-            image: _formData['image'],
-            price: _formData['price']),
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price'],
       );
     }
-    Navigator.pushReplacementNamed(context, '/products');
+    Navigator.pushReplacementNamed(context, '/products').then((_) => setSelectedProduct(null));
   }
 
   @override
